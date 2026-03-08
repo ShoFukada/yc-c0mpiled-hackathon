@@ -32,7 +32,7 @@ pnpm install
 
 # バックエンド
 cd backend
-uv sync
+uv sync --all-packages
 
 # playground（お遊び環境）
 cd playground
