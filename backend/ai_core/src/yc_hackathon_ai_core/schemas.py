@@ -31,3 +31,15 @@ class DetailUploadResult(BaseModel):
 
     point_id: int
     status: str
+
+
+class DetailAnalysisResult(BaseModel):
+    """ディテール画像の真贋判定結果"""
+
+    point_id: int
+    observation: str
+    comparison: str
+    verdict: str
+    confidence: int
+    reasoning: str
+    sop_reference: str

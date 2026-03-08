@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { sessionImageUrl, uploadDetail } from "@/api/client";
+import { analyzeDetail, sessionImageUrl, uploadDetail } from "@/api/client";
 import { detailStatusQueryOptions, sessionQueryOptions } from "@/api/queries";
 import { GuidedCapture } from "@/components/GuidedCapture";
 
@@ -20,13 +20,23 @@ function CapturePage() {
 
 	const imageUrl = sessionImageUrl(sessionId);
 
-	const uploadMutation = useMutation({
-		mutationFn: ({ pointId, file }: { pointId: number; file: File }) =>
-			uploadDetail(sessionId, pointId, file),
+	const analyzeMutation = useMutation({
+		mutationFn: (pointId: number) => analyzeDetail(sessionId, pointId),
 		onSuccess: () => {
 			queryClient.invalidateQueries({
 				queryKey: ["sessions", sessionId, "details"],
 			});
+		},
+	});
+
+	const uploadMutation = useMutation({
+		mutationFn: ({ pointId, file }: { pointId: number; file: File }) =>
+			uploadDetail(sessionId, pointId, file),
+		onSuccess: (_data, { pointId }) => {
+			queryClient.invalidateQueries({
+				queryKey: ["sessions", sessionId, "details"],
+			});
+			analyzeMutation.mutate(pointId);
 		},
 	});
 
@@ -64,6 +74,13 @@ function CapturePage() {
 			imageUrl={imageUrl}
 			result={session.result}
 			uploadedPointIds={detailStatus?.uploaded_point_ids ?? []}
+			analyses={detailStatus?.analyses ?? []}
+			isAnalyzing={analyzeMutation.isPending}
+			analyzingPointId={
+				analyzeMutation.isPending
+					? (analyzeMutation.variables as number)
+					: undefined
+			}
 			onUploadDetail={(pointId, file) =>
 				uploadMutation.mutate({ pointId, file })
 			}

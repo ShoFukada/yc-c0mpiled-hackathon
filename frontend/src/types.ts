@@ -16,3 +16,13 @@ export interface InspectionPoint {
 export interface InspectionResult {
 	points: InspectionPoint[];
 }
+
+export interface PointAnalysis {
+	point_id: number;
+	verdict: string;
+	observation: string;
+	comparison: string;
+	confidence: number;
+	reasoning: string;
+	sop_reference: string;
+}

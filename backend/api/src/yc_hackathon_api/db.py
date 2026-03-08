@@ -9,10 +9,11 @@ import json
 from pathlib import Path
 from uuid import uuid4
 
+from yc_hackathon_ai_core import DetailAnalysisResult
 from yc_hackathon_shared import get_logger
 
 from yc_hackathon_api.database import UPLOADS_DIR, SessionLocal
-from yc_hackathon_api.models import DetailImageModel, SessionModel
+from yc_hackathon_api.models import DetailImageModel, PointAnalysisModel, SessionModel
 
 logger = get_logger("api.db")
 
@@ -47,6 +48,21 @@ def create_session(image_bytes: bytes, mime_type: str) -> str:
         len(image_bytes),
     )
     return session_id
+
+
+def list_sessions() -> list[dict]:
+    with SessionLocal() as db:
+        rows = db.query(SessionModel).order_by(SessionModel.created_at.desc()).all()
+        return [
+            {
+                "id": r.id,
+                "mime_type": r.mime_type,
+                "identified_shoe": r.identified_shoe,
+                "has_result": r.result_json is not None,
+                "created_at": str(r.created_at),
+            }
+            for r in rows
+        ]
 
 
 def get_session(session_id: str) -> dict | None:
@@ -131,6 +147,66 @@ def get_detail_point_ids(session_id: str) -> list[int]:
             .all()
         )
         return [r[0] for r in rows]
+
+
+def save_point_analysis(
+    session_id: str,
+    analysis: DetailAnalysisResult,
+) -> None:
+    with SessionLocal() as db:
+        existing = db.get(
+            PointAnalysisModel,
+            (session_id, analysis.point_id),
+        )
+        if existing:
+            existing.verdict = analysis.verdict
+            existing.observation = analysis.observation
+            existing.comparison = analysis.comparison
+            existing.confidence = analysis.confidence
+            existing.reasoning = analysis.reasoning
+            existing.sop_reference = analysis.sop_reference
+        else:
+            db.add(
+                PointAnalysisModel(
+                    session_id=session_id,
+                    point_id=analysis.point_id,
+                    verdict=analysis.verdict,
+                    observation=analysis.observation,
+                    comparison=analysis.comparison,
+                    confidence=analysis.confidence,
+                    reasoning=analysis.reasoning,
+                    sop_reference=analysis.sop_reference,
+                ),
+            )
+        db.commit()
+    logger.info(
+        "analysis saved: session=%s, point=%d, verdict=%s",
+        session_id,
+        analysis.point_id,
+        analysis.verdict,
+    )
+
+
+def get_point_analyses(session_id: str) -> list[dict]:
+    with SessionLocal() as db:
+        rows = (
+            db.query(PointAnalysisModel)
+            .filter(PointAnalysisModel.session_id == session_id)
+            .order_by(PointAnalysisModel.point_id)
+            .all()
+        )
+        return [
+            {
+                "point_id": r.point_id,
+                "verdict": r.verdict,
+                "observation": r.observation,
+                "comparison": r.comparison,
+                "confidence": r.confidence,
+                "reasoning": r.reasoning,
+                "sop_reference": r.sop_reference,
+            }
+            for r in rows
+        ]
 
 
 def get_detail_image_path(session_id: str, point_id: int) -> Path | None:

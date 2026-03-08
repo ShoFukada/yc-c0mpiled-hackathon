@@ -7,7 +7,7 @@ from fastapi import FastAPI, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
-from yc_hackathon_ai_core import InspectionResult, inspect_sneaker
+from yc_hackathon_ai_core import InspectionResult, analyze_detail, inspect_sneaker
 from yc_hackathon_shared import get_logger, get_settings
 
 from yc_hackathon_api.database import init_db
@@ -16,9 +16,12 @@ from yc_hackathon_api.db import (
     get_detail_image_path,
     get_detail_point_ids,
     get_original_image_path,
+    get_point_analyses,
     get_session,
+    list_sessions,
     save_detail_image,
     save_identified_shoe,
+    save_point_analysis,
     save_result,
 )
 
@@ -35,6 +38,7 @@ app.add_middleware(
 
 PROJECT_ROOT = Path(__file__).resolve().parents[4]
 INSPECTION_MD_PATH = PROJECT_ROOT / "data" / "inspection" / "sop.md"
+REFERENCE_IMAGES_DIR = PROJECT_ROOT / "data" / "images"
 
 
 def _load_inspection_md() -> str:
@@ -53,12 +57,37 @@ class SessionResponse(BaseModel):
     created_at: str
 
 
+class SessionSummary(BaseModel):
+    id: str
+    mime_type: str
+    identified_shoe: str | None
+    has_result: bool
+    created_at: str
+
+
+class ReferenceImage(BaseModel):
+    url: str
+    label: str
+
+
 class IdentifyResponse(BaseModel):
     name: str
+    reference_images: list[ReferenceImage]
+
+
+class PointAnalysisResponse(BaseModel):
+    point_id: int
+    verdict: str
+    observation: str
+    comparison: str
+    confidence: int
+    reasoning: str
+    sop_reference: str
 
 
 class DetailStatusResponse(BaseModel):
     uploaded_point_ids: list[int]
+    analyses: list[PointAnalysisResponse]
 
 
 class DetailUploadResponse(BaseModel):
@@ -77,6 +106,12 @@ async def on_startup() -> None:
 
 
 # --- Sessions ---
+
+
+@app.get("/api/sessions")
+async def api_list_sessions() -> list[SessionSummary]:
+    rows = await asyncio.to_thread(list_sessions)
+    return [SessionSummary(**r) for r in rows]
 
 
 @app.post("/api/sessions")
@@ -140,7 +175,27 @@ async def api_identify_shoe(session_id: str) -> IdentifyResponse:
 
     await asyncio.to_thread(save_identified_shoe, session_id, shoe_name)
     logger.info("shoe identified (mock): %s", shoe_name)
-    return IdentifyResponse(name=shoe_name)
+
+    reference_images = [
+        ReferenceImage(url="/api/references/target_authentic.jpg", label="Authentic Reference"),
+        ReferenceImage(url="/api/references/similar_01.jpg", label="Similar Model 1"),
+        ReferenceImage(url="/api/references/similar_02.jpg", label="Similar Model 2"),
+    ]
+
+    return IdentifyResponse(name=shoe_name, reference_images=reference_images)
+
+
+# --- Reference images ---
+
+
+@app.get("/api/references/{filename}")
+async def api_get_reference_image(filename: str) -> FileResponse:
+    path = REFERENCE_IMAGES_DIR / filename
+    if not path.resolve().is_relative_to(REFERENCE_IMAGES_DIR.resolve()):
+        raise HTTPException(status_code=400, detail="Invalid path")
+    if not path.is_file():
+        raise HTTPException(status_code=404, detail="Reference image not found")
+    return FileResponse(path)
 
 
 # --- Inspect ---
@@ -189,7 +244,9 @@ async def api_run_inspect(session_id: str) -> InspectionResult:
 @app.get("/api/sessions/{session_id}/details")
 async def api_get_details(session_id: str) -> DetailStatusResponse:
     point_ids = await asyncio.to_thread(get_detail_point_ids, session_id)
-    return DetailStatusResponse(uploaded_point_ids=point_ids)
+    analyses_raw = await asyncio.to_thread(get_point_analyses, session_id)
+    analyses = [PointAnalysisResponse(**a) for a in analyses_raw]
+    return DetailStatusResponse(uploaded_point_ids=point_ids, analyses=analyses)
 
 
 @app.post("/api/sessions/{session_id}/details/{point_id}")
@@ -210,3 +267,77 @@ async def api_get_detail_image(session_id: str, point_id: int) -> FileResponse:
     if not path:
         raise HTTPException(status_code=404, detail="Detail image not found")
     return FileResponse(path)
+
+
+# --- Analysis ---
+
+
+@app.post("/api/sessions/{session_id}/details/{point_id}/analyze")
+async def api_analyze_detail(
+    session_id: str,
+    point_id: int,
+) -> PointAnalysisResponse:
+    request_start = time.monotonic()
+    logger.info(
+        "--- POST /api/sessions/%s/details/%d/analyze ---",
+        session_id,
+        point_id,
+    )
+
+    detail_path = await asyncio.to_thread(
+        get_detail_image_path,
+        session_id,
+        point_id,
+    )
+    if not detail_path:
+        raise HTTPException(
+            status_code=404,
+            detail="Detail image not found",
+        )
+
+    image_bytes = detail_path.read_bytes()
+    mime = "image/jpeg"
+    if detail_path.suffix.lower() == ".png":
+        mime = "image/png"
+
+    settings = get_settings()
+    sop_md = _load_inspection_md()
+
+    try:
+        result = await analyze_detail(
+            image_bytes=image_bytes,
+            mime_type=mime,
+            sop_md=sop_md,
+            point_id=point_id,
+            api_key=settings.GEMINI_API_KEY,
+        )
+    except Exception:
+        elapsed = time.monotonic() - request_start
+        logger.exception(
+            "detail analysis failed after %.2fs",
+            elapsed,
+        )
+        raise
+
+    await asyncio.to_thread(
+        save_point_analysis,
+        session_id,
+        result,
+    )
+
+    elapsed = time.monotonic() - request_start
+    logger.info(
+        "analysis completed: point=%d, verdict=%s in %.2fs",
+        point_id,
+        result.verdict,
+        elapsed,
+    )
+    return PointAnalysisResponse(
+        point_id=result.point_id,
+        verdict=result.verdict,
+        observation=result.observation,
+        comparison=result.comparison,
+        confidence=result.confidence,
+        reasoning=result.reasoning,
+        sop_reference=result.sop_reference,
+    )
