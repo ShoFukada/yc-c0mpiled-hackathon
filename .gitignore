@@ -237,8 +237,22 @@ $RECYCLE.BIN/
 # .nfs files are created when an open file is removed but is still being accessed
 .nfs*
 
+# Node.js
+node_modules/
+dist/
+*.db-journal
+*.db-wal
+
+# TanStack Router auto-generated
+**/routeTree.gen.ts
+
+# Python
+__pycache__/
+.venv/
+*.pyc
+uv.lock
+
 # Project specific
-# Add any project-specific ignores here
 logs/
 secrets/
 .secrets/

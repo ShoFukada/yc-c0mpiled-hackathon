@@ -1,0 +1,8 @@
+[project]
+name = "playground"
+version = "0.1.0"
+description = "お遊び環境。API実験、プロンプト試行、ライブラリ検証など自由に使う"
+requires-python = ">=3.12"
+dependencies = [
+
+]
