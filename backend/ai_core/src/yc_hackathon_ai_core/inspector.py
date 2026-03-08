@@ -89,6 +89,30 @@ async def inspect_sneaker(
     logger.info("calling Gemini API...")
     api_start = time.monotonic()
 
+    response_schema = types.Schema(
+        type=types.Type.OBJECT,
+        properties={
+            "points": types.Schema(
+                type=types.Type.ARRAY,
+                items=types.Schema(
+                    type=types.Type.OBJECT,
+                    properties={
+                        "id": types.Schema(type=types.Type.INTEGER),
+                        "label": types.Schema(type=types.Type.STRING),
+                        "description": types.Schema(type=types.Type.STRING),
+                        "capture_guide": types.Schema(type=types.Type.STRING),
+                        "box_2d": types.Schema(
+                            type=types.Type.ARRAY,
+                            items=types.Schema(type=types.Type.INTEGER),
+                        ),
+                    },
+                    required=["id", "label", "description", "capture_guide", "box_2d"],
+                ),
+            ),
+        },
+        required=["points"],
+    )
+
     response = client.models.generate_content(
         model=MODEL,
         contents=[
@@ -97,6 +121,7 @@ async def inspect_sneaker(
         ],
         config=types.GenerateContentConfig(
             response_mime_type="application/json",
+            response_schema=response_schema,
         ),
     )
 
