@@ -4,9 +4,11 @@ version = "0.1.0"
 description = "FastAPI server"
 requires-python = ">=3.12"
 dependencies = [
+    "alembic>=1.18.4",
     "fastapi>=0.122.0",
     "pydantic>=2.12.4",
     "python-multipart>=0.0.20",
+    "sqlalchemy>=2.0.48",
     "yc-hackathon-ai-core",
     "yc-hackathon-shared",
 ]
