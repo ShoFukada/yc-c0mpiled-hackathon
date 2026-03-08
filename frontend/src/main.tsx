@@ -1,6 +1,7 @@
 // クライアント側のエントリーポイント
 // ReactアプリをDOMにマウントし、TanStack Router/Queryを初期化
 
+import "./styles.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { StrictMode } from "react";
