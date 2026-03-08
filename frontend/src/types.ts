@@ -9,6 +9,7 @@ export interface InspectionPoint {
 	id: number;
 	label: string;
 	description: string;
+	capture_guide: string;
 	bbox: BBox;
 }
 
