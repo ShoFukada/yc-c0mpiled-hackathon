@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { useCallback, useState } from "react";
 import type { InspectionResult } from "@/types";
 
@@ -28,9 +29,12 @@ export function InspectionGuide({
 			<header className="flex-shrink-0 border-b border-border-subtle bg-surface/80 backdrop-blur-md z-30">
 				<div className="max-w-screen-2xl mx-auto px-5 py-3 flex items-center justify-between">
 					<div className="flex items-center gap-3">
-						<h1 className="font-display text-base font-700 tracking-tight">
-							LEGIT CHECK
-						</h1>
+						<Link
+							to="/"
+							className="font-display text-base font-700 tracking-tight hover:text-accent transition-colors"
+						>
+							AuthentiFlow
+						</Link>
 						<span className="text-border-medium">/</span>
 						<span className="text-text-muted text-sm">Results</span>
 					</div>

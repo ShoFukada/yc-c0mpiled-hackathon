@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { useCallback, useRef, useState } from "react";
 import { detailImageUrl } from "@/api/client";
 import type { InspectionResult, PointAnalysis } from "@/types";
@@ -98,9 +99,12 @@ export function GuidedCapture({
 								/>
 							</svg>
 						</button>
-						<h1 className="font-display text-base font-700 tracking-tight">
-							LEGIT CHECK
-						</h1>
+						<Link
+							to="/"
+							className="font-display text-base font-700 tracking-tight hover:text-accent transition-colors"
+						>
+							AuthentiFlow
+						</Link>
 						<span className="text-border-medium">/</span>
 						<span className="text-text-muted text-sm">Detail Capture</span>
 					</div>

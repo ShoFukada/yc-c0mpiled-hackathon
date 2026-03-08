@@ -40,7 +40,7 @@ export function UploadScreen({ onUpload, isPending }: UploadScreenProps) {
 						Sneaker Authentication
 					</p>
 					<h1 className="font-display text-5xl font-800 tracking-tight leading-tight">
-						LEGIT CHECK
+						AuthentiFlow
 					</h1>
 					<p className="mt-4 text-text-secondary text-base leading-relaxed">
 						Upload a sneaker photo and

@@ -27,7 +27,7 @@ from yc_hackathon_api.db import (
 
 logger = get_logger("api")
 
-app = FastAPI(title="YC Hackathon API")
+app = FastAPI(title="AuthentiFlow API")
 
 app.add_middleware(
     CORSMiddleware,
