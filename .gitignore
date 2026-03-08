@@ -288,6 +288,10 @@ config.ini
 *.orig
 
 
+# App generated data
+data/uploads/
+playground/output/
+
 # Terraform
 .terraform/
 *.tfstate
