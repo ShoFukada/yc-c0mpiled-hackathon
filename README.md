@@ -79,6 +79,17 @@ uv run uvicorn yc_hackathon_api.main:app --reload --port 8000
 | `uv run ruff check --fix .` | lint 自動修正 |
 | `uv run ruff format .` | フォーマット |
 
+### Playground (`playground/`)
+
+backend とは独立した Python 環境。API の動作確認、プロンプトの試行、ライブラリの検証など自由に使える。
+
+```bash
+cd playground
+uv sync
+uv run python example.py    # スクリプト実行
+uv add pandas               # 好きなパッケージを追加
+```
+
 ## ディレクトリ構成
 
 ```
