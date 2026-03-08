@@ -18,44 +18,50 @@ MODEL = "gemini-3-flash-preview"
 
 
 def _build_prompt(inspection_md: str) -> str:
-    return f"""あなたはスニーカーの真贋鑑定の専門家です。
+    return f"""You are an expert in sneaker authentication (legit check).
 
-以下の「鑑定観点」に基づいて、添付されたスニーカー画像を分析してください。
+Analyze the attached sneaker image based on the following inspection criteria.
 
-## 鑑定観点
+## Inspection Criteria
 {inspection_md}
 
-## タスク
-1. 画像に写っているスニーカーを分析し、上記の鑑定観点のうち画像から確認できるものを特定してください
-2. 各観点について、画像上のどの部分に該当するかをバウンディングボックス(正規化座標0-1000)で示してください
-3. 各観点について、鑑定時に具体的に何を確認すべきかの説明を記述してください
+## Task
+1. Analyze the sneaker in the image and identify which of the above inspection criteria are visible.
+2. For each criterion, indicate the corresponding region in the image \
+with a bounding box (normalized coordinates 0-1000).
+3. For each criterion, provide a description of what specifically to check during authentication.
+4. For each criterion, provide close-up photography instructions for more detailed authentication.
 
-## 出力形式
-以下のJSON形式で出力してください。それ以外のテキストは出力しないでください。
-box_2dは [ymin, xmin, ymax, xmax] の順で、0-1000に正規化した座標です。
+## Output Format
+Output in the following JSON format only. Do not output any other text.
+box_2d uses [ymin, xmin, ymax, xmax] order, with coordinates normalized to 0-1000.
 
 ```json
 {{{{
   "points": [
     {{{{
-      "id": <鑑定観点の番号>,
-      "label": "観点の名前",
-      "description": "この画像における具体的な確認ポイントの説明",
+      "id": <inspection criterion number>,
+      "label": "Name of the criterion",
+      "description": "Specific checkpoints to examine in this image",
+      "capture_guide": "Photography instructions for closer authentication. \
+Include distance, angle, and lighting conditions.",
       "box_2d": [ymin, xmin, ymax, xmax]
     }}}}
   ]
 }}}}
 ```
 
-重要:
-- box_2dは [ymin, xmin, ymax, xmax] の順で、画像の左上を(0,0)、右下を(1000,1000)とした正規化座標
-- 画像から確認できる観点のみを出力してください
-- descriptionは鑑定の実用的なアドバイスを含めてください
+Important:
+- box_2d uses [ymin, xmin, ymax, xmax] order, normalized to 0-1000 \
+(top-left is (0,0), bottom-right is (1000,1000)).
+- Only output criteria that are visible in the image.
+- Include practical authentication advice in the description.
+- In capture_guide, describe specifically from what angle, at what distance, and what to focus on when photographing.
 """
 
 
 def _convert_box_2d_to_bbox(box_2d: list[int]) -> BBox:
-    """Geminiの box_2d [ymin, xmin, ymax, xmax] → BBox {x1, y1, x2, y2} に変換"""
+    """Geminiの box_2d [ymin, xmin, ymax, xmax] -> BBox {{x1, y1, x2, y2}} に変換"""
     ymin, xmin, ymax, xmax = box_2d
     return BBox(x1=xmin, y1=ymin, x2=xmax, y2=ymax)
 
@@ -76,10 +82,9 @@ async def inspect_sneaker(
     prompt = _build_prompt(inspection_md)
     logger.debug("prompt length: %d chars", len(prompt))
 
-    # MIMEタイプのフォールバック
     resolved_mime = mime_type if mime_type and "/" in mime_type else "image/jpeg"
     if resolved_mime != mime_type:
-        logger.warning("mime_type fallback: %s → %s", mime_type, resolved_mime)
+        logger.warning("mime_type fallback: %s -> %s", mime_type, resolved_mime)
 
     logger.info("calling Gemini API...")
     api_start = time.monotonic()
@@ -116,16 +121,18 @@ async def inspect_sneaker(
     for p in raw_points:
         box_2d = p.get("box_2d", [])
         logger.debug(
-            "  raw point: id=%s, label=%s, box_2d=%s",
+            "  raw point: id=%s, label=%s, box_2d=%s, capture_guide=%s",
             p.get("id"),
             p.get("label"),
             box_2d,
+            p.get("capture_guide", "")[:80],
         )
         points.append(
             InspectionPoint(
                 id=p["id"],
                 label=p["label"],
                 description=p["description"],
+                capture_guide=p.get("capture_guide", ""),
                 bbox=_convert_box_2d_to_bbox(box_2d),
             )
         )
