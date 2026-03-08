@@ -1,6 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { identifyShoe, runInspect, sessionImageUrl } from "@/api/client";
+import { useState } from "react";
+import {
+	identifyShoe,
+	type ReferenceImage,
+	runInspect,
+	sessionImageUrl,
+} from "@/api/client";
 import { sessionQueryOptions } from "@/api/queries";
 import { IdentifyingScreen } from "@/components/IdentifyingScreen";
 import { InspectionGuide } from "@/components/InspectionGuide";
@@ -17,12 +23,14 @@ function InspectPage() {
 	const queryClient = useQueryClient();
 
 	const { data: session, isLoading } = useQuery(sessionQueryOptions(sessionId));
+	const [referenceImages, setReferenceImages] = useState<ReferenceImage[]>([]);
 
 	const imageUrl = sessionImageUrl(sessionId);
 
 	const identifyMutation = useMutation({
 		mutationFn: () => identifyShoe(sessionId),
-		onSuccess: () => {
+		onSuccess: (data) => {
+			setReferenceImages(data.reference_images);
 			queryClient.invalidateQueries({ queryKey: ["sessions", sessionId] });
 		},
 	});
@@ -82,6 +90,7 @@ function InspectPage() {
 			<PreviewScreen
 				imageUrl={imageUrl}
 				shoeName={session.identified_shoe}
+				referenceImages={referenceImages}
 				onStart={() => inspectMutation.mutate()}
 				onReselect={() => navigate({ to: "/" })}
 				error={
