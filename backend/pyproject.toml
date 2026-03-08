@@ -9,6 +9,7 @@ dependencies = []
 members = [
     "api",
     "ai_core",
+    "shared",
 ]
 
 [dependency-groups]
@@ -49,9 +50,9 @@ ignore = [
 [tool.pyright]
 typeCheckingMode = "standard"
 pythonVersion = "3.12"
-include = ["api/src", "ai_core/src"]
+include = ["api/src", "ai_core/src", "shared/src"]
 exclude = ["**/__pycache__", "**/.venv"]
 
 [tool.pytest.ini_options]
-testpaths = ["api/tests", "ai_core/tests"]
+testpaths = ["api/tests", "ai_core/tests", "shared/tests"]
 addopts = ["--verbose"]

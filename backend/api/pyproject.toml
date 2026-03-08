@@ -6,7 +6,9 @@ requires-python = ">=3.12"
 dependencies = [
     "fastapi>=0.122.0",
     "pydantic>=2.12.4",
+    "python-multipart>=0.0.20",
     "yc-hackathon-ai-core",
+    "yc-hackathon-shared",
 ]
 
 [build-system]
@@ -15,6 +17,7 @@ build-backend = "uv_build"
 
 [tool.uv.sources]
 yc-hackathon-ai-core = { workspace = true }
+yc-hackathon-shared = { workspace = true }
 
 [dependency-groups]
 dev = [
