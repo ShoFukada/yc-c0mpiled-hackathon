@@ -5,12 +5,14 @@ interface InspectionGuideProps {
 	imageUrl: string;
 	result: InspectionResult;
 	onReset: () => void;
+	onGoToCapture: () => void;
 }
 
 export function InspectionGuide({
 	imageUrl,
 	result,
 	onReset,
+	onGoToCapture,
 }: InspectionGuideProps) {
 	const [selectedId, setSelectedId] = useState<number | null>(null);
 
@@ -30,44 +32,67 @@ export function InspectionGuide({
 							LEGIT CHECK
 						</h1>
 						<span className="text-border-medium">/</span>
-						<span className="text-text-muted text-sm">鑑定結果</span>
+						<span className="text-text-muted text-sm">Results</span>
 					</div>
-					<button
-						type="button"
-						onClick={onReset}
-						className="flex items-center gap-2 text-sm text-text-muted hover:text-text-primary transition-colors duration-200 px-3 py-1.5 rounded-lg hover:bg-surface-raised border border-transparent hover:border-border-subtle"
-					>
-						<svg
-							className="w-4 h-4"
-							fill="none"
-							viewBox="0 0 24 24"
-							stroke="currentColor"
-							strokeWidth={1.5}
+					<div className="flex items-center gap-2">
+						<button
+							type="button"
+							onClick={onReset}
+							className="flex items-center gap-2 text-sm text-text-muted hover:text-text-primary transition-colors duration-200 px-3 py-1.5 rounded-lg hover:bg-surface-raised border border-transparent hover:border-border-subtle"
 						>
-							<path
-								strokeLinecap="round"
-								strokeLinejoin="round"
-								d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.992 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182"
-							/>
-						</svg>
-						<span className="font-display font-500">別の写真を鑑定</span>
-					</button>
+							<svg
+								className="w-4 h-4"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke="currentColor"
+								strokeWidth={1.5}
+							>
+								<path
+									strokeLinecap="round"
+									strokeLinejoin="round"
+									d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.992 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182"
+								/>
+							</svg>
+							<span className="font-display font-500 hidden sm:inline">
+								Reset
+							</span>
+						</button>
+						<button
+							type="button"
+							onClick={onGoToCapture}
+							className="flex items-center gap-2 text-sm px-4 py-1.5 rounded-lg bg-accent text-surface font-display font-600 hover:bg-accent-light transition-all duration-200 shadow-[0_0_20px_-6px_rgba(201,160,68,0.3)]"
+						>
+							Detail Capture
+							<svg
+								className="w-4 h-4"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke="currentColor"
+								strokeWidth={2}
+							>
+								<path
+									strokeLinecap="round"
+									strokeLinejoin="round"
+									d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"
+								/>
+							</svg>
+						</button>
+					</div>
 				</div>
 			</header>
 
-			{/* Main content — ヘッダー以外を左右で埋める */}
+			{/* Main content */}
 			<div className="flex-1 flex flex-col lg:flex-row min-h-0">
-				{/* 左: 画像カード */}
+				{/* Left: Image */}
 				<div className="lg:flex-1 min-h-0 p-4 lg:p-6 flex items-center justify-center">
 					<div className="relative inline-block animate-fade-in-up max-h-full">
 						<div className="relative rounded-xl overflow-hidden border border-border-subtle">
 							<img
 								src={imageUrl}
-								alt="鑑定対象のスニーカー"
+								alt="Sneaker under inspection"
 								className="block max-w-full max-h-[calc(100vh-120px)] object-contain"
 							/>
 
-							{/* Bounding box overlay */}
 							{selectedPoint && (
 								<div
 									className="absolute border-2 border-accent rounded-md bg-accent/8 animate-bbox-reveal pointer-events-none"
@@ -80,7 +105,6 @@ export function InspectionGuide({
 								/>
 							)}
 
-							{/* Markers */}
 							{result.points.map((point, i) => {
 								const isSelected = selectedId === point.id;
 								const cx = (point.bbox.x1 + point.bbox.x2) / 2 / 10;
@@ -119,20 +143,18 @@ export function InspectionGuide({
 					</div>
 				</div>
 
-				{/* 右: ポイント一覧 — 独立スクロール */}
+				{/* Right: Points list */}
 				<div className="lg:w-[420px] min-h-0 border-t lg:border-t-0 lg:border-l border-border-subtle bg-surface-raised/30 overflow-y-auto">
 					<div className="p-5">
-						{/* Panel header */}
 						<div className="flex items-center justify-between mb-4 sticky top-0 bg-surface-raised/30 backdrop-blur-sm -mx-5 px-5 py-2 -mt-5 z-10">
 							<h2 className="font-display text-xs font-600 text-text-muted tracking-[0.2em] uppercase">
-								鑑定ポイント
+								Inspection Points
 							</h2>
 							<span className="text-xs text-text-muted font-display tabular-nums">
 								{result.points.length} items
 							</span>
 						</div>
 
-						{/* Point cards */}
 						<div className="space-y-2">
 							{result.points.map((point, i) => {
 								const isSelected = selectedId === point.id;
@@ -179,8 +201,6 @@ export function InspectionGuide({
 													{point.description}
 												</p>
 											</div>
-
-											{/* Arrow */}
 											<svg
 												className={`w-4 h-4 mt-1 flex-shrink-0 transition-all duration-200 ${isSelected ? "text-accent rotate-90" : "text-border-medium"}`}
 												fill="none"

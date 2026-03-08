@@ -1,8 +1,8 @@
-interface LoadingScreenProps {
+interface IdentifyingScreenProps {
 	imageUrl: string;
 }
 
-export function LoadingScreen({ imageUrl }: LoadingScreenProps) {
+export function IdentifyingScreen({ imageUrl }: IdentifyingScreenProps) {
 	return (
 		<div className="flex flex-col items-center justify-center min-h-screen px-6 py-12">
 			<div className="relative max-w-lg w-full space-y-10">
@@ -11,7 +11,7 @@ export function LoadingScreen({ imageUrl }: LoadingScreenProps) {
 					<div className="relative rounded-2xl overflow-hidden border border-border-subtle bg-surface-raised">
 						<img
 							src={imageUrl}
-							alt="Analyzing sneaker"
+							alt="Identifying sneaker"
 							className="w-full max-h-[50vh] object-contain bg-black/30"
 						/>
 
@@ -41,11 +41,11 @@ export function LoadingScreen({ imageUrl }: LoadingScreenProps) {
 							<span className="w-1.5 h-1.5 rounded-full bg-accent animate-bounce [animation-delay:300ms]" />
 						</div>
 						<p className="font-display text-lg font-600 text-text-primary tracking-tight">
-							Generating Inspection Guide
+							Identifying Sneaker
 						</p>
 					</div>
 					<p className="text-text-muted text-sm">
-						AI is analyzing the image and identifying inspection points
+						AI is analyzing the image to identify the shoe model
 					</p>
 				</div>
 			</div>
