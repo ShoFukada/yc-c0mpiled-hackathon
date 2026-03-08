@@ -19,7 +19,7 @@ export function IdentifyingScreen({ imageUrl }: IdentifyingScreenProps) {
 						<div className="absolute inset-0 bg-gradient-to-b from-accent/5 via-transparent to-accent/5 animate-pulse-glow" />
 
 						{/* Scanning line */}
-						<div className="absolute left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent to-transparent animate-scan-line shadow-[0_0_15px_2px_rgba(201,160,68,0.3)]" />
+						<div className="absolute left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent to-transparent animate-scan-line shadow-[0_0_15px_2px_rgba(208,107,58,0.3)]" />
 
 						{/* Corner brackets */}
 						<div className="absolute top-4 left-4 w-6 h-6 border-t-2 border-l-2 border-accent/60 rounded-tl-sm" />

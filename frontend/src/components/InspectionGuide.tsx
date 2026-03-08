@@ -60,7 +60,7 @@ export function InspectionGuide({
 						<button
 							type="button"
 							onClick={onGoToCapture}
-							className="flex items-center gap-2 text-sm px-4 py-1.5 rounded-lg bg-accent text-surface font-display font-600 hover:bg-accent-light transition-all duration-200 shadow-[0_0_20px_-6px_rgba(201,160,68,0.3)]"
+							className="flex items-center gap-2 text-sm px-4 py-1.5 rounded-lg bg-accent text-surface font-display font-600 hover:bg-accent-light transition-all duration-200 shadow-[0_0_20px_-6px_rgba(208,107,58,0.3)]"
 						>
 							Detail Capture
 							<svg
@@ -129,7 +129,7 @@ export function InspectionGuide({
 												transition-all duration-200 shadow-lg
 												${
 													isSelected
-														? "bg-accent text-surface scale-110 ring-2 ring-accent/40 shadow-[0_0_20px_-4px_rgba(201,160,68,0.5)]"
+														? "bg-accent text-surface scale-110 ring-2 ring-accent/40 shadow-[0_0_20px_-4px_rgba(208,107,58,0.5)]"
 														: "bg-surface-raised/90 text-text-primary border border-border-medium backdrop-blur-sm hover:bg-surface-overlay hover:border-accent-dim hover:scale-110"
 												}
 											`}
@@ -167,7 +167,7 @@ export function InspectionGuide({
 											animate-fade-in-up w-full text-left rounded-xl p-4 transition-all duration-200
 											${
 												isSelected
-													? "bg-accent/8 border border-accent/25 shadow-[0_0_30px_-10px_rgba(201,160,68,0.15)]"
+													? "bg-accent/8 border border-accent/25 shadow-[0_0_30px_-10px_rgba(208,107,58,0.15)]"
 													: "bg-surface-raised/50 border border-border-subtle hover:bg-surface-overlay hover:border-border-medium"
 											}
 										`}

@@ -64,8 +64,8 @@ export function UploadScreen({ onUpload, isPending }: UploadScreenProps) {
 							group w-full rounded-2xl border p-14 transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-wait
 							${
 								isDragOver
-									? "border-accent bg-accent/5 shadow-[0_0_60px_-12px_rgba(201,160,68,0.3)]"
-									: "border-border-subtle bg-surface-raised hover:border-border-medium hover:bg-surface-overlay hover:shadow-[0_0_60px_-12px_rgba(201,160,68,0.1)]"
+									? "border-accent bg-accent/5 shadow-[0_0_60px_-12px_rgba(208,107,58,0.3)]"
+									: "border-border-subtle bg-surface-raised hover:border-border-medium hover:bg-surface-overlay hover:shadow-[0_0_60px_-12px_rgba(208,107,58,0.1)]"
 							}
 						`}
 					>
