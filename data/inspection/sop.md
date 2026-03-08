@@ -8,27 +8,7 @@
 
 ---
 
-## Inspection Point 1: Lateral Swoosh & Eyestay Overlays
-
-**Focus Area:** The lateral Swoosh logo and the dark grey synthetic leather panels around the laces (eyestays).
-
-### ✅ Authentic (Real) Characteristics
-
-- The Swoosh logo features a subtle cream/light grey pebbled leather texture with a natural matte finish.
-- The Swoosh shape tapers cleanly toward the front tip, ending in a sharp, slender point.
-- The dark grey eyestay panels have a smooth texture with clean, even single stitching along the edges.
-- The wavy-cut panel below the laces features distinctive small indentations (resembling punch-hole marks).
-
-### 🚨 Counterfeit (Fake) Patterns
-
-- The Swoosh surface appears smooth and shiny, resembling plastic rather than textured leather. It lacks the characteristic pebbled grain entirely.
-- The stitching around the Swoosh is crooked, unevenly spaced, or inconsistent in thread tension.
-- The Swoosh shape is distorted — the front tip looks thicker, blunter, and clumsy instead of tapering to a clean point.
-- Overall the logo looks cheap and poorly manufactured, with a visibly lower material quality.
-
----
-
-## Inspection Point 2: Air Unit & Midsole Construction
+## Inspection Point 1: Air Unit & Midsole Construction
 
 **Focus Area:** The lateral heel section of the midsole, specifically the structure around the window exposing the Air unit.
 
@@ -48,7 +28,7 @@
 
 ---
 
-## Inspection Point 3: Toe Box Mesh & Mudguard
+## Inspection Point 2: Toe Box Mesh & Mudguard
 
 **Focus Area:** The front mesh material and the dark grey mudguard wrapping from the toe to the lateral side.
 
@@ -65,3 +45,23 @@
 - The mesh texture looks rougher and more synthetic, as if made from cheaper material — it may appear stiff rather than soft.
 - The mudguard stitching has minor irregularities such as slightly uneven spacing in certain sections, or fraying.
 - The panel cutting is too large, causing the entire toe to look awkwardly bloated or chunky.
+
+---
+
+## Inspection Point 3: Lateral Swoosh & Eyestay Overlays
+
+**Focus Area:** The lateral Swoosh logo and the dark grey synthetic leather panels around the laces (eyestays).
+
+### ✅ Authentic (Real) Characteristics
+
+- The Swoosh logo features a subtle cream/light grey pebbled leather texture with a natural matte finish.
+- The Swoosh shape tapers cleanly toward the front tip, ending in a sharp, slender point.
+- The dark grey eyestay panels have a smooth texture with clean, even single stitching along the edges.
+- The wavy-cut panel below the laces features distinctive small indentations (resembling punch-hole marks).
+
+### 🚨 Counterfeit (Fake) Patterns
+
+- The Swoosh surface appears smooth and shiny, resembling plastic rather than textured leather. It lacks the characteristic pebbled grain entirely.
+- The stitching around the Swoosh is crooked, unevenly spaced, or inconsistent in thread tension.
+- The Swoosh shape is distorted — the front tip looks thicker, blunter, and clumsy instead of tapering to a clean point.
+- Overall the logo looks cheap and poorly manufactured, with a visibly lower material quality.
